@@ -44,7 +44,8 @@
 
   .row{padding:13px 18px;}
   .row + .row{border-top:1px solid var(--line);}
-  .lbl{display:block;font-size:13px;font-weight:600;color:var(--sub);margin-bottom:3px;}
+  .lbl{display:flex;justify-content:space-between;align-items:flex-end;font-size:13px;font-weight:600;color:var(--sub);margin-bottom:3px;}
+  .lbl em{font-style:normal;font-size:11px;font-weight:400;}
   .row input, .row select{
     display:block;width:100%;padding:4px 0;border:0;outline:0;background:transparent;
     color:var(--text);font-family:inherit;font-size:17px;font-weight:600;
@@ -69,7 +70,6 @@
     transition:background .15s,color .15s;
   }
   .chip.on{background:var(--accent);color:#fff;}
-  .chip[data-k="err"]{display:none;} /* 预留 */
 
   .go{
     display:block;width:100%;padding:17px;border:0;border-radius:16px;
@@ -90,7 +90,6 @@
     color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.04em;
     margin-bottom:10px;
   }
-  .badge.warn-badge{background:var(--warn-bg);color:var(--warn-text);}
   .main h2{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em;}
   .main .sub{margin:5px 0 16px;font-size:13px;font-weight:500;color:var(--sub);}
   
@@ -104,7 +103,6 @@
     background:var(--warn-bg); color:var(--warn-text);
     font-size:13px; font-weight:500; line-height:1.5;
   }
-  .warn.danger{background:rgba(255,59,48,.15);color:var(--danger);}
 
   .opt{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);line-height:1.5;}
   .opt b{color:var(--text);font-weight:600;}
@@ -129,42 +127,45 @@
 
   <header class="hd">
     <h1>粉体设备预选型</h1>
-    <p>多维度评估 · 智能互斥防呆</p>
+    <p>输入物料自动识别物性 · 精准匹配产能</p>
   </header>
 
   <!-- 物料基础信息 -->
   <section class="card">
     <div class="row">
-      <label class="lbl">物料名称</label>
-      <input id="mat" type="text" placeholder="如 混凝土瓦" autocomplete="off" spellcheck="false">
+      <label class="lbl">物料名称 <em>输入名称自动匹配</em></label>
+      <input id="mat" type="text" list="matList" placeholder="如 石英、甘草、碳酸钙" autocomplete="off" spellcheck="false">
+      <datalist id="matList">
+        <!-- 动态生成 -->
+      </datalist>
     </div>
     <div class="row">
       <label class="lbl">物料类别</label>
       <select id="cat">
         <option value="">请选择</option>
-        <option value="mineral">非金属矿（碳酸钙、高岭土）</option>
-        <option value="hard">硬质矿物 / 高硅（石英、混凝土）</option>
+        <option value="mineral">非金属矿</option>
+        <option value="hard">硬质矿物 / 高硅</option>
         <option value="battery">电池材料</option>
         <option value="pharma">医药 / 原料药</option>
         <option value="food">食品 / 保健品</option>
-        <option value="chem">化工 / 颜料 / 染料</option>
+        <option value="chem">化工 / 颜料</option>
         <option value="herb">中药 / 植物纤维</option>
         <option value="metal">金属粉末</option>
-        <option value="waste">固废 / 粉煤灰 / 尾矿</option>
+        <option value="waste">固废 / 粉煤灰</option>
         <option value="other">其他</option>
       </select>
     </div>
     <div class="row">
-      <label class="lbl">目标产能（kg/h）</label>
-      <input id="cap" type="text" inputmode="decimal" placeholder="如 1000" autocomplete="off">
+      <label class="lbl">目标产能（kg/h） <em>精准匹配单机</em></label>
+      <input id="cap" type="text" inputmode="decimal" placeholder="如 25, 1000" autocomplete="off">
     </div>
   </section>
 
   <!-- 粒度要求 -->
   <section class="card">
     <div class="row">
-      <label class="lbl">目标粒度（µm）</label>
-      <input id="size" type="text" inputmode="decimal" placeholder="如 20" autocomplete="off">
+      <label class="lbl">目标粒度（µm） <em>支持范围：如 10-20</em></label>
+      <input id="size" type="text" inputmode="text" placeholder="如 10-20，或 74" autocomplete="off">
     </div>
     <div class="seg" id="seg">
       <button data-v="D50" class="on">D50</button>
@@ -175,29 +176,16 @@
     </div>
   </section>
 
-  <!-- 占地与系统要求 -->
-  <section class="card">
-    <div class="row">
-      <label class="lbl">系统占地面积</label>
-      <select id="space">
-        <option value="any">不限 / 充足</option>
-        <option value="small">紧凑 / 较小 (&lt; 100㎡)</option>
-        <option value="medium">中等 (100 - 300㎡)</option>
-        <option value="large">大型厂房 (&gt; 300㎡)</option>
-      </select>
-    </div>
-  </section>
-
   <!-- 工艺及物料特性 -->
   <section class="card">
     <div class="row">
-      <label class="lbl">物料特性与工艺要求（可多选）</label>
+      <label class="lbl">物料特性与工艺要求（自动填充，可手动修改）</label>
     </div>
     <div class="chips" id="chips">
       <button class="chip" data-k="hard">莫氏硬度 &gt; 5</button>
       <button class="chip" data-k="quartz">含石英 / 磨蚀性极高</button>
       <button class="chip" data-k="wet">含水率 &gt; 5%</button>
-      <button class="chip" data-k="fib">纤维状 / 韧性极强</button>
+      <button class="chip" data-k="fib">纤维状 / 高韧性</button>
       <button class="chip" data-k="sticky">粘性强 / 易糊壁</button>
       <button class="chip" data-k="static">易起静电</button>
       <button class="chip" data-k="flow">流动性差 / 易团聚</button>
@@ -213,123 +201,123 @@
 
   <div id="out"></div>
 
-  <p class="tip">结果基于埃尔派标准机型库，已内置互斥逻辑（如粘性强自动排除气流磨，占地小排除球磨）。实际报价以工程师选型为准。</p>
+  <p class="tip">系统采用严格的“产能优先 + 互斥防呆”算法，杜绝“大马拉小车”。结果仅供评估，实际报价以工程师选型为准。</p>
 
 </div>
 
 <script>
-/* ============ 设备库（按专家逻辑更新） ============ */
+/* ============ 内置物料知识库 ============ */
+const MATERIAL_DB = {
+  "石英": { cat: "hard", attrs: ["hard", "quartz"] },
+  "混凝土": { cat: "waste", attrs: ["hard", "quartz", "wet"] },
+  "钢渣": { cat: "waste", attrs: ["hard", "wet"] },
+  "粉煤灰": { cat: "waste", attrs: ["wet"] },
+  "碳酸钙": { cat: "mineral", attrs: [] },
+  "重钙": { cat: "mineral", attrs: [] },
+  "高岭土": { cat: "mineral", attrs: ["sticky"] },
+  "滑石": { cat: "mineral", attrs: [] },
+  "云母": { cat: "mineral", attrs: ["fib"] },
+  "石墨": { cat: "mineral", attrs: ["flow", "pure"] },
+  
+  "甘草": { cat: "herb", attrs: ["fib", "heat"] },
+  "三七": { cat: "herb", attrs: ["fib"] },
+  "黄芪": { cat: "herb", attrs: ["fib", "sticky"] },
+  "茶叶": { cat: "herb", attrs: ["fib"] },
+  "中药": { cat: "herb", attrs: ["fib"] },
+  
+  "阿莫西林": { cat: "pharma", attrs: ["gmp", "pure", "heat", "static"] },
+  "布洛芬": { cat: "pharma", attrs: ["gmp", "pure", "heat"] },
+  "中药提取物": { cat: "pharma", attrs: ["gmp", "sticky", "heat"] },
+  
+  "三元材料": { cat: "battery", attrs: ["pure", "oxidation", "static"] },
+  "磷酸铁锂": { cat: "battery", attrs: ["pure", "oxidation"] },
+  "石墨负极": { cat: "battery", attrs: ["pure", "oxidation", "flow"] },
+  
+  "糖": { cat: "food", attrs: ["gmp", "sticky", "heat"] },
+  "盐": { cat: "food", attrs: ["gmp", "wet"] },
+  "奶粉": { cat: "food", attrs: ["gmp", "sticky"] },
+  "大豆": { cat: "food", attrs: ["fib"] },
+  
+  "氧化铝": { cat: "hard", attrs: ["hard", "pure"] },
+  "碳化硅": { cat: "hard", attrs: ["hard", "pure", "quartz"] },
+  "氧化锆": { cat: "hard", attrs: ["hard", "pure"] },
+  
+  "PVC": { cat: "chem", attrs: ["heat", "static"] },
+  "PE": { cat: "chem", attrs: ["heat", "fib"] },
+  "颜料": { cat: "chem", attrs: ["pure"] },
+  "炭黑": { cat: "chem", attrs: ["flow", "pure", "static"] },
+  
+  "铁粉": { cat: "metal", attrs: ["oxidation", "pure"] },
+  "钴粉": { cat: "metal", attrs: ["oxidation", "pure"] }
+};
+
+/* ============ 设备库 ============ */
 const DB = [
   {
     id:'MQW', name:'MQW 流化床式气流磨', sub:'卧式分级轮 · 干法超细',
-    cat:'气流磨', d97:[3,45],
-    footprint:'medium',
-    good:['heat','pure','ex','gmp','oxidation','volatile'],
-    bad:['fib','sticky','quartz','hard','wet','flow'],
+    cat:'气流磨', d97:[3,45], good:['heat','pure','ex','gmp','oxidation','volatile'], bad:['fib','sticky','quartz','hard','wet','flow'],
     models:[['MQW03',0.3,1],['MQW06',10,30],['MQW10',20,300],['MQW20',40,600],['MQW30',100,900],['MQW40',200,1200],['MQW60',500,2000],['MQW80',800,3000],['MQW100',1000,4000],['MQW120',1500,6000],['MQW160',2000,8000],['MQW240',4000,12000]],
-    opt:['氮气循环保护 (易氧化/挥发)','陶瓷内衬','CIP / SIP','防静电设计']
+    opt:['氮气循环保护','陶瓷内衬','CIP / SIP','防静电设计']
   },
   {
     id:'MQL', name:'MQL 流化床式气流磨', sub:'立式单转子 · 大产能',
-    cat:'气流磨', d97:[6,150],
-    footprint:'large',
-    good:['heat','pure','ex','gmp','oxidation','volatile'],
-    bad:['fib','sticky','quartz','hard','wet','flow'],
+    cat:'气流磨', d97:[6,150], good:['heat','pure','ex','gmp','oxidation','volatile'], bad:['fib','sticky','quartz','hard','wet','flow'],
     models:[['MQL03',10,40],['MQL06',10,60],['MQL10',20,300],['MQL20',40,600],['MQL30',100,900],['MQL40',200,1200],['MQL50',500,2000],['MQL80',800,3000],['MQL100',1000,4000],['MQL120',1500,6000],['MQL160',2000,8000],['MQL240',4000,12000]],
     opt:['氮气循环保护','陶瓷内衬','称重喂料','防静电设计']
   },
   {
     id:'CSMV', name:'CSM-V 空气分级磨', sub:'立式分级轮 · 通用型机械磨',
-    cat:'机械磨', d97:[5,115],
-    footprint:'small',
-    good:['soft','flow'],
-    bad:['pure','fib','hard','quartz','sticky','oxidation'],
+    cat:'机械磨', d97:[5,115], good:['soft','flow'], bad:['pure','fib','hard','quartz','sticky','oxidation'],
     models:[['CSM280-V',60,150],['CSM350-V',120,280],['CSM410-V',180,380],['CSM510-V',260,520],['CSM710-V',400,760],['CSM760-V',450,850],['CSM900-V',700,1300],['CSM1000-V',850,1500],['CSM1100-V',1100,2000],['CSM1250-V',1500,2600],['CSM1500-V',2000,3400],['CSM2000-V',3000,5200]],
     opt:['陶瓷内衬','低温 / 惰性气体循环','防爆设计']
   },
   {
     id:'CSMVD', name:'CSM-VD 空气分级磨', sub:'双轴合一 · 医药食品级',
-    cat:'机械磨', d97:[5,115],
-    footprint:'small',
-    good:['gmp','pure','soft'],
-    bad:['fib','hard','quartz','sticky'],
+    cat:'机械磨', d97:[5,115], good:['gmp','pure','soft'], bad:['fib','hard','quartz','sticky'],
     models:[['CSM280-VD',30,80],['CSM350-VD',55,140],['CSM450-VD',90,220],['CSM510-VD',130,320],['CSM710-VD',220,560],['CSM900-VD',400,1000],['CSM1100-VD',650,1600]],
     opt:['CIP / SIP','陶瓷内衬','GMP 验证文件']
   },
   {
-    id:'RTM', name:'RTM 涡流磨', sub:'锥形转子 · 韧性物料优选',
-    cat:'机械磨', d97:[2.5,600],
-    footprint:'small',
-    good:['fib','sticky','soft'],
-    bad:['hard','pure','quartz','static'],
-    models:[['RTM300',80,200],['RTM500',240,600],['RTM750',500,1200],['RTM1000',800,1900],['RTM1250',1100,2600],['RTM1500',1600,3800]],
-    opt:['陶瓷内衬','防爆设计','外接热源改性']
-  },
-  {
-    id:'CUMP', name:'CUM-P 针盘磨', sub:'无筛网 · 纤维粘性物料',
-    cat:'机械磨', d97:[25,115],
-    footprint:'small',
-    good:['fib','sticky'],
-    bad:['pure','sticky','hard','quartz'],
-    models:[['CUM160-P',30,80],['CUM250-P',90,240],['CUM360-P',180,480],['CUM500-P',350,950],['CUM630-P',600,1600],['CUM800-P',950,2600],['CUM1000-P',1500,4000]],
-    opt:['双动力 200m/s','陶瓷内衬','惰性气体循环']
+    id:'CUM', name:'CUM 系列机械粉碎机', sub:'锤式/针盘 · 韧性物料优选',
+    cat:'机械磨', d97:[25,600], good:['fib','sticky','soft'], bad:['hard','pure','quartz','static'],
+    models:[['CUM160',30,80],['CUM260',90,240],['CUM360',180,480],['CUM500',350,950],['CUM630',600,1600],['CUM800',950,2600],['CUM1000',1500,4000]],
+    opt:['陶瓷内衬','防爆设计','加热/冷却风']
   },
   {
     id:'MZ', name:'MZ 振动磨', sub:'研磨介质 · 强韧性/中药',
-    cat:'机械磨', d97:[6,380],
-    footprint:'medium',
-    good:['fib','hard','soft','sticky'],
-    bad:['pure','static'],
+    cat:'机械磨', d97:[6,380], good:['fib','hard','soft','sticky'], bad:['pure','static'],
     models:[['MZ100',100,200],['MZ300',200,300],['MZ500',300,600],['MZ600',400,800],['MZ800',500,1000],['MZ1000',800,1500],['MZ1200',1000,1800],['MZ2000',2000,3000]],
     opt:['陶瓷磨介','低温 / 水冷夹套','GMP 结构']
   },
   {
-    id:'STEAM', name:'S-MQW/L 蒸汽动能磨', sub:'过热蒸汽 · 亚微米级',
-    cat:'蒸汽磨', d97:[1.5,45],
-    footprint:'large',
-    good:['heat','pure','wet','ultra'],
-    bad:['fib','quartz'],
-    models:[['S-MQW/L 2000',400,1000],['S-MQW/L 3000',600,1500],['S-MQW/L 4000',800,2000],['S-MQW/L 6000',1200,3000],['S-MQW/L 10000',2000,5000],['S-MQW/L 15000',3000,8000],['S-MQW/L 20000',4000,10000]],
-    opt:['陶瓷内衬','多级分级串联','防爆设计']
-  },
-  {
     id:'BALL', name:'球磨分级生产线', sub:'大规模 · 低能耗 · 闭路循环',
-    cat:'球磨', d97:[3,45],
-    footprint:'large',
-    good:['hard','wet','quartz','waste','sticky'],
-    bad:['heat','gmp'],
+    cat:'球磨', d97:[3,45], good:['hard','wet','quartz','waste','sticky'], bad:['heat','gmp'],
     models:[
       { name:'IBM1570 + FL360', cap:[500, 2000], desc:'小产能标准线' },
-      { name:'IBM1830 + FL360', cap:[1000, 3000], desc:'1吨级主力线 (专家推荐)' },
+      { name:'IBM1830 + FL360', cap:[1000, 3000], desc:'1吨级主力线' },
       { name:'IBM2200 + FL450', cap:[2500, 5000], desc:'3吨级标准线' },
-      { name:'IBM2400 + FL600', cap:[4000, 8000], desc:'5吨级主力线 (专家推荐)' },
+      { name:'IBM2400 + FL600', cap:[4000, 8000], desc:'5吨级主力线' },
       { name:'IBM2600 + FL630', cap:[6000, 12000], desc:'8吨级标准线' },
       { name:'IBM2800 + FL800', cap:[8000, 16000], desc:'10吨级大线' },
       { name:'IBM3000 + FL1000', cap:[12000, 25000], desc:'20吨级大线' }
     ],
-    opt:['高铬耐磨衬板/钢球 (必须)','陶瓷衬板 (可选)','除铁器','自动包装']
+    opt:['高铬耐磨衬板/钢球','陶瓷衬板','除铁器','自动包装']
   }
 ];
 
-/* ============ 物料类别 → 默认属性 ============ */
-const CAT_ATTRS = {
-  mineral: [],
-  hard:    ['hard','quartz'],
-  battery: ['pure','oxidation'],
-  pharma:  ['gmp','pure','heat'],
-  food:    ['gmp'],
-  chem:    ['heat','volatile'],
-  herb:    ['fib','heat','sticky'],
-  metal:   ['oxidation','pure','hard'],
-  waste:   ['hard','wet','quartz'],
-  other:   []
-};
+/* ============ 动态生成物料联想列表 ============ */
+const matListEl = document.getElementById('matList');
+Object.keys(MATERIAL_DB).forEach(k => {
+  const opt = document.createElement('option');
+  opt.value = k;
+  matListEl.appendChild(opt);
+});
 
 /* ============ 交互 ============ */
 const $ = id => document.getElementById(id);
 const matEl  = $('mat'),  catEl  = $('cat'),  capEl = $('cap');
 const sizeEl = $('size'), segEl  = $('seg'),  chipsEl = $('chips');
-const spaceEl = $('space'), outEl  = $('out');
+const outEl  = $('out');
 
 let basis = 'D50'; 
 
@@ -347,46 +335,46 @@ chipsEl.addEventListener('click', e => {
   b.classList.toggle('on');
 });
 
-catEl.addEventListener('change', () => {
-  const def = CAT_ATTRS[catEl.value] || [];
-  [...chipsEl.children].forEach(b => {
-    b.classList.toggle('on', def.includes(b.dataset.k));
-  });
+// 物料名称输入联动
+matEl.addEventListener('input', () => {
+  const val = matEl.value.trim();
+  const info = MATERIAL_DB[val];
+  if (info) {
+    catEl.value = info.cat;
+    [...chipsEl.children].forEach(b => {
+      b.classList.toggle('on', info.attrs.includes(b.dataset.k));
+    });
+  }
 });
 
-/* ============ 计算 ============ */
+/* ============ 计算逻辑 ============ */
+// 解析粒度范围，提取最严苛的上限
+function parseSizeRange(str) {
+  if (!str) return 0;
+  // 匹配数字，支持 10-20, 10~20, 10
+  const nums = str.match(/\d+(\.\d+)?/g);
+  if (!nums) return 0;
+  if (nums.length >= 2) return parseFloat(nums[1]); // 取上限
+  return parseFloat(nums[0]);
+}
+
 function normD97(size, basis){
   if (basis === 'D50') return size * 2.5;
   if (basis === 'D90') return size * 1.4;
   if (basis === 'D99') return size * 1.1;
-  if (basis === 'D100') return size * 0.6; // D100极严，等效D97通常要求更细
+  if (basis === 'D100') return size * 0.6;
   return size;
 }
 
-function scoreSeries(s, d97, cap, attrs, space){
+function scoreSeries(s, d97, cap, attrs){
   // ----- 绝对互斥逻辑 (防呆) -----
-  
-  // 1. 硬度冲突：>5硬度排机械冲击磨
   const isHighHard = attrs.includes('hard') || attrs.includes('quartz');
+  
   if (s.cat === '机械磨' && isHighHard) return -1; 
-
-  // 2. 粘性冲突：气流磨极怕粘
   if (s.cat === '气流磨' && attrs.includes('sticky')) return -1;
-  
-  // 3. 纤维冲突：气流磨打不断纤维
   if (s.cat === '气流磨' && attrs.includes('fib')) return -1;
-
-  // 4. 含水冲突：普通气流磨易板结
   if (s.cat === '气流磨' && attrs.includes('wet')) return -1;
-  
-  // 5. 占地冲突：小球磨/大球磨
-  if (s.id === 'BALL' && space === 'small') return -1;
-  if (s.id === 'MQL' && space === 'small') return -1;
-
-  // 6. 氧化/挥发冲突：机械磨干摩擦高温易氧化，除非有特殊冷却(需降分)
-  if (s.cat === '机械磨' && (attrs.includes('oxidation') || attrs.includes('volatile'))) {
-     // 不直接排除，但做大幅扣分，让气流磨上位
-  }
+  if (s.id === 'BALL' && cap < 500) return -1; // 球磨机不适合极小产能
 
   // ----- 粒度可达性 -----
   if (d97 < s.d97[0] * 0.65) return -1;
@@ -394,39 +382,58 @@ function scoreSeries(s, d97, cap, attrs, space){
 
   let sc = 0;
   
+  // 1. 产能匹配 (优先级最高，权重极大)
+  let bestModelIdx = -1;
+  let minDiff = Infinity;
+  let maxCap = 0;
+  
+  if (s.id === 'BALL') {
+    maxCap = s.models[s.models.length - 1].cap[1];
+    for (let i = 0; i < s.models.length; i++) {
+      const m = s.models[i];
+      if (cap >= m.cap[0] && cap <= m.cap[1]) {
+        sc += 100; // 完美落在单机区间
+        minDiff = 0;
+        break;
+      }
+      // 找最接近的
+      const diff = cap < m.cap[0] ? (m.cap[0] - cap) / cap : (cap - m.cap[1]) / cap;
+      if (diff < minDiff) { minDiff = diff; bestModelIdx = i; }
+    }
+  } else {
+    maxCap = s.models[s.models.length - 1][2];
+    for (let i = 0; i < s.models.length; i++) {
+      const m = s.models[i];
+      if (cap >= m[1] && cap <= m[2]) {
+        sc += 100; // 完美落在单机区间
+        minDiff = 0;
+        break;
+      }
+      const diff = cap < m[1] ? (m[1] - cap) / cap : (cap - m[2]) / cap;
+      if (diff < minDiff) { minDiff = diff; bestModelIdx = i; }
+    }
+  }
+
+  // 如果客户需求严重低于设备最小产能 (大马拉小车)，直接重罚
+  if (minDiff > 0.5) {
+    sc -= 150; 
+  } else if (minDiff > 0.1) {
+    sc -= 30;
+  }
+
   // 粒度分
   if (d97 >= s.d97[0] && d97 <= s.d97[1]) sc += 60;
   else if (d97 < s.d97[0]) sc += 15;
-  else sc += 20 - Math.min(20, (d97 - s.d97[1]) / s.d97[1] * 30);
-
-  // 产能分
-  let maxCap = 0;
-  if (s.id === 'BALL') maxCap = s.models[s.models.length - 1].cap[1];
-  else maxCap = s.models[s.models.length - 1][2];
-  
-  if (cap > maxCap * 5) return -1;
-  sc += cap <= maxCap ? 30 : 8;
+  else sc += 20;
 
   // 属性分加减
   for (const a of attrs){
     if (s.good.includes(a)) sc += 20; 
     if (s.bad.includes(a))  sc -= 35;
-    
-    // 特殊处理：氧化/挥发对机械磨的惩罚
-    if (a === 'oxidation' || a === 'volatile') {
-      if (s.cat === '机械磨') sc -= 40;
-    }
-    // 静电对气流磨的惩罚 (除非选配防静电)
-    if (a === 'static' && s.cat === '气流磨') sc -= 15;
+    if ((a === 'oxidation' || a === 'volatile') && s.cat === '机械磨') sc -= 40;
   }
 
-  // 专家逻辑强推：如果是高硬/石英，球磨机绝对C位
-  if (isHighHard && s.id === 'BALL') sc += 100;
-  if (attrs.includes('quartz') && s.id === 'BALL') sc += 20;
-
-  // 占地面积加分
-  if (space === 'small' && s.footprint === 'small') sc += 10;
-  if (space === 'large' && s.footprint === 'large') sc += 10;
+  if (isHighHard && s.id === 'BALL') sc += 80;
 
   return sc;
 }
@@ -438,21 +445,24 @@ function pickModel(s, cap){
         return { name: m.name, range: `${m.cap[0]}–${m.cap[1]} kg/h`, desc: m.desc };
       }
     }
-    const last = s.models[s.models.length - 1];
-    const k = Math.ceil(cap / last.cap[1]);
-    return { name: `${last.name} × ${k} 套`, range: `${last.cap[0] * k}–${last.cap[1] * k} kg/h`, desc: '多套并联' };
+    // 找最接近的兜底
+    let best = s.models[0], minD = Infinity;
+    for (const m of s.models) {
+       let d = cap < m.cap[0] ? m.cap[0] - cap : cap - m.cap[1];
+       if (d < minD) { minD = d; best = m; }
+    }
+    return { name: best.name + ' (需定制)', range: `${best.cap[0]}–${best.cap[1]} kg/h`, desc: best.desc };
   } else {
     for (const m of s.models){
-      if (m[2] >= cap) return { name: m[0], range: `${m[1]}–${m[2]} kg/h`, desc:'' };
+      if (cap >= m[1] && cap <= m[2]) return { name: m[0], range: `${m[1]}–${m[2]} kg/h`, desc:'' };
     }
-    const last = s.models[s.models.length - 1];
-    const k = Math.ceil(cap / last[2]);
-    return { name: `${last[0]} × ${k} 台`, range: `${last[1] * k}–${last[2] * k} kg/h`, desc:'多台并联' };
+    let best = s.models[0], minD = Infinity;
+    for (const m of s.models) {
+       let d = cap < m[1] ? m[1] - cap : cap - m[2];
+       if (d < minD) { minD = d; best = m; }
+    }
+    return { name: best[0] + ' (需定制)', range: `${best[1]}–${best[2]} kg/h`, desc:'' };
   }
-}
-
-function fmtD97(s){
-  return `D97 ${s.d97[0]}–${s.d97[1]} µm`;
 }
 
 function render(list, ctx){
@@ -461,7 +471,7 @@ function render(list, ctx){
       <div class="card">
         <div class="empty">
           <h3>参数存在互斥，无匹配机型</h3>
-          <p>当前工艺组合超出常规物理界限（如：要求极细但物料粘性极强/纤维极强）。<br>建议联系埃尔派工程师安排物料小试后定制专机。</p>
+          <p>当前工艺组合超出常规物理界限。<br>建议联系埃尔派工程师安排物料小试后定制专机。</p>
         </div>
       </div>`;
     return;
@@ -471,36 +481,27 @@ function render(list, ctx){
   const mm = pickModel(main.s, ctx.cap);
   const matName = matEl.value.trim();
   
-  // 专属预警提示
   let warningHtml = '';
   if (ctx.attrs.includes('quartz') || ctx.attrs.includes('hard')) {
     warningHtml += `
       <div class="warn">
         <b>⚠️ 工程师选型警告：</b><br>
-        物料磨蚀性极强（含硬质相/石英），严禁使用普通钢衬板。<br>
-        推荐配置：<b>高铬合金耐磨衬板 + 高铬钢球 + 管道除铁器</b>，确保设备寿命和产品纯度。
+        物料磨蚀性极强，严禁使用普通钢衬板。<br>
+        推荐配置：<b>高铬合金耐磨衬板 + 高铬钢球 + 管道除铁器</b>。
       </div>
     `;
   }
   if (ctx.attrs.includes('oxidation') || ctx.attrs.includes('volatile')) {
     warningHtml += `
-      <div class="warn danger">
+      <div class="warn" style="background:rgba(255,59,48,.15);color:var(--danger);">
         <b>⛔ 严控环境：</b><br>
-        系统必须配备<b>全密闭惰性气体循环（氮气保护）</b>及含氧量在线监测，以防燃爆或物料变质。
-      </div>
-    `;
-  }
-  if (ctx.attrs.includes('sticky') || ctx.attrs.includes('fib')) {
-     warningHtml += `
-      <div class="warn">
-        <b>💡 工艺提示：</b><br>
-        由于物料具有强粘性或高韧性，系统进料及管道需配置<b>强力打散装置与高频气锤</b>，防止堵塞。
+        系统必须配备<b>全密闭惰性气体循环（氮气保护）</b>及含氧量在线监测，以防燃爆。
       </div>
     `;
   }
 
   let html = `
-    <div class="res-head">评估结果 · ${ctx.sizeText}</div>
+    <div class="res-head">评估结果 · ${ctx.sizeText} · ${ctx.cap} kg/h</div>
     <div class="card">
       <div class="main">
         <div class="badge">主推方案</div>
@@ -509,7 +510,7 @@ function render(list, ctx){
         <div class="grid">
           <div><span>推荐配置</span><b>${mm.name}</b></div>
           <div><span>产能范围</span><b>${mm.range}</b></div>
-          <div><span>可达粒度</span><b>${fmtD97(main.s)}</b></div>
+          <div><span>可达粒度</span><b>D97 ${main.s.d97[0]}–${main.s.d97[1]} µm</b></div>
           <div><span>工艺类型</span><b>${main.s.cat}</b></div>
         </div>
         ${warningHtml}
@@ -529,7 +530,7 @@ function render(list, ctx){
           <div class="kv">
             <div><span>型号 </span><b>${am.name}</b></div>
             <div><span>产能 </span><b>${am.range}</b></div>
-            <div><span>粒度 </span><b>${fmtD97(a.s)}</b></div>
+            <div><span>粒度 </span><b>D97 ${a.s.d97[0]}–${a.s.d97[1]} µm</b></div>
           </div>
         </div>`;
     }
@@ -540,15 +541,9 @@ function render(list, ctx){
 }
 
 function evaluate(){
-  const sizeRaw = parseFloat(sizeEl.value);
+  const sizeRaw = parseSizeRange(sizeEl.value);
   if (!(sizeRaw > 0)){
-    outEl.innerHTML = `
-      <div class="card">
-        <div class="empty">
-          <h3>请填写目标粒度</h3>
-          <p>粒度是选型的核心参数。</p>
-        </div>
-      </div>`;
+    outEl.innerHTML = `<div class="card"><div class="empty"><h3>请填写目标粒度</h3><p>粒度是选型的核心参数。</p></div></div>`;
     return;
   }
 
@@ -556,18 +551,17 @@ function evaluate(){
   const cap = capRaw > 0 ? capRaw : 1000; 
   const d97 = normD97(sizeRaw, basis);
   const attrs = [...chipsEl.querySelectorAll('.chip.on')].map(b => b.dataset.k);
-  const space = spaceEl.value;
 
   const scored = [];
   for (const s of DB){
-    const sc = scoreSeries(s, d97, cap, attrs, space);
+    const sc = scoreSeries(s, d97, cap, attrs);
     if (sc > 0) scored.push({ s, sc });
   }
   scored.sort((a, b) => b.sc - a.sc);
 
   render(scored.slice(0, 3), {
-    cap, d97, attrs, space,
-    sizeText: `${basis} ${sizeRaw} µm`
+    cap, d97, attrs,
+    sizeText: `${basis} ${sizeEl.value} µm`
   });
 }
 
